@@ -1,0 +1,21 @@
+{% extends '@Admin/default/layout.html.twig' %}
+{% block h1 %}{{ title }}{% endblock %}
+{% block content %}
+            {% form_theme form '@Admin/default/form/single_form.html.twig' %}
+            <form action="" method="POST" enctype="multipart/form-data" >
+            {{ form_errors(form) }}
+                <div class="row">
+                   
+{{ form_widget(form) }}
+                   
+                </div>
+                <div class="col-lg-12" style="border-top: 1px solid; margin-top: 10px; padding-top: 20px">
+                    <div class="form-group">
+                        <button type="button" onClick="document.location='{{ path(home_route) }}'" class="btn btn-default">Отмена</button>
+                        <button type="submit" class="btn btn-success">Сохранить</button>
+                    </div>
+                </div>
+
+            </form>
+{% endblock %}
+

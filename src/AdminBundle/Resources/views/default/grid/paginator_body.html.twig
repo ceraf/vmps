@@ -1,0 +1,24 @@
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="dataTables_info" role="status" aria-live="polite">Показано с {{ paginator.itemsonpage*paginator.currpage + 1 }} по {{ paginator.itemsonpage*paginator.currpage + rows|length  }} из {{ paginator.total }}</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="dataTables_paginate paging_simple_numbers">
+                            <ul class="pagination">
+                                <li class="paginate_button previous {% if paginator.currpage == 0 %}disabled{% endif %}" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_previous"><a href="{% if paginator.currpage == 0 %}javascript:void(0){% else %}{{ path(paginator.route, {p: paginator.currpage - 1}) }}{% endif %}">Пред</a></li>
+                                {% for i in 0..paginator.numpages - 1 %}
+                                    {% if (paginator.numpages  < 8) or 
+                                        (i == 0) or 
+                                        (i == (paginator.numpages - 1) or
+                                        ((i >= (paginator.currpage - 2)) and (i <= (paginator.currpage + 2))) or 
+                                        ((paginator.currpage < 2) and (i < 6)) or
+                                        ((paginator.currpage > (paginator.numpages - 3)) and (i > (paginator.numpages - 7)))) %}
+                                        <li class="paginate_button {% if paginator.currpage == i %}active{% endif %}" aria-controls="dataTables-example" tabindex="0"><a href="{{ path(paginator.route, {p: i}) }}">{{ i + 1 }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                                <li class="paginate_button next {% if paginator.currpage == (paginator.numpages - 1) %}disabled{% endif %}" aria-controls="dataTables-example" tabindex="0" id="dataTables-example_next"><a href="{% if paginator.currpage == (paginator.numpages - 1) %}javascript:void(0){% else %}{{ path(paginator.route, {p: paginator.currpage + 1}) }}{% endif %}">След</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+

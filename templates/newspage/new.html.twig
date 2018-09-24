@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Newspage{% endblock %}
+
+{% block body %}
+    <h1>Create new Newspage</h1>
+
+    {{ include('newspage/_form.html.twig') }}
+
+    <a href="{{ path('newspage_index') }}">back to list</a>
+{% endblock %}

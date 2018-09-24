@@ -1,0 +1,37 @@
+admin_home:
+    path: /home
+    controller: App\AdminBundle\Controller\DefaultController::index
+
+admin_host_list:
+    path: /hosts
+    controller: App\AdminBundle\Controller\HostController::index
+  
+admin_host_action:
+    path: /host/{action}/{id}
+    controller: App\AdminBundle\Controller\HostController::rowact
+    defaults:
+        id: 0 
+    
+admin_newspage_list:
+    path: /newspages
+    controller: App\AdminBundle\Controller\NewsController::index
+    defaults:
+        p: 0
+  
+admin_newspage_action:
+    path: /newspage/{action}/{id}
+    controller: App\AdminBundle\Controller\NewsController::rowact
+    defaults:
+        id: 0 
+
+admin_category_news_list:
+    path: /newscategories
+    controller: App\AdminBundle\Controller\CategorynewsController::index
+    defaults:
+        p: 0
+  
+admin_category_news_action:
+    path: /newscategory/{action}/{id}
+    controller: App\AdminBundle\Controller\CategorynewsController::rowact
+    defaults:
+        id: 0 

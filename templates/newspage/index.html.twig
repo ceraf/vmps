@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Newspage index{% endblock %}
+
+{% block body %}
+    <h1>Newspage index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Short_desct</th>
+                <th>Description</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for newspage in newspages %}
+            <tr>
+                <td>{{ newspage.id }}</td>
+                <td>{{ newspage.title }}</td>
+                <td>{{ newspage.shortDesct }}</td>
+                <td>{{ newspage.description }}</td>
+                <td>
+                    <a href="{{ path('newspage_show', {'id': newspage.id}) }}">show</a>
+                    <a href="{{ path('newspage_edit', {'id': newspage.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('newspage_new') }}">Create new</a>
+{% endblock %}

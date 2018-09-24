@@ -1,0 +1,6 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+admin:
+    resource: "@AdminBundle/Resources/config/routing.yaml"
+    prefix:   /admin
