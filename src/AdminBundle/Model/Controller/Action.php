@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+
+use App\AdminBundle\Model\Event\ActionAddEvent;
+use App\AdminBundle\Model\Event\ActionEditEvent;
+use App\AdminBundle\Model\Event\ActionDeleteEvent;
 
 class Action
 {
@@ -20,6 +25,7 @@ class Action
     protected $actionname;
     protected $request;
     protected $homeroute;
+	protected $dispatcher;
     
     public function __construct(Request $request, $container)
     {
@@ -34,6 +40,12 @@ class Action
         return $this;
     }
     
+	public function setDispatcher(EventDispatcher $dispatcher)
+	{
+        $this->dispatcher = $dispatcher;
+        return $this;		
+	}
+	
     public function setForm($formclass)
     {
         $this->formclass = $formclass;
@@ -61,33 +73,36 @@ class Action
     protected function deleteAction($params)
     {
         $id = $params['id'];
-        if ($id) {
-            $row = $this->getDoctrine()
-					->getRepository($this->entity)
-					->find($id);
-            $em = $this->getDoctrine()->getEntityManager();
-            if ($row) {
-                try {       
-                    if (method_exists($row, 'deleteFiles'))
-                        $row->deleteFiles($this->container->get('file_uploader'));
-                    
-                    $em->getConnection()->beginTransaction();
-                    if ($row->isHasSeoUrl())
-                        $this->deleteRewrite($row->getSeoUrlKey());
-                    
-                    $em->remove($row);
-                    $em->flush();
-                    $this->flashMessage('notice', 'Категория удалена.');
-                    $em->getConnection()->commit();
-                } catch (Exception $e) {
-                    $this->flashMessage('notice', 'При удалении категории произошла ошибка.');
-                    $em->getConnection()->rollback();
-                }
-            } else {
-                $this->flashMessage('error', 'При удалении категории произошла ошибка.');
-            }
+		if ($this->request->getMethod() == 'POST') {
+			if ($id) {
+				$row = $this->getDoctrine()
+						->getRepository($this->entity)
+						->find($id);
+				$em = $this->getDoctrine()->getEntityManager();
+				if ($row) {
+					try {       
+						if (method_exists($row, 'deleteFiles'))
+							$row->deleteFiles($this->container->get('file_uploader'));
+						
+						$em->getConnection()->beginTransaction();
+						if ($row->isHasSeoUrl())
+							$this->deleteRewrite($row->getSeoUrlKey());
+						
+						$em->remove($row);
+						$em->flush();
+						$this->flashMessage('notice', 'Line was deleted.');
+						$em->getConnection()->commit();
+						$event = new ActionEditEvent($row);
+						$this->dispatcher->dispatch(ActionDeleteEvent::NAME, $event);
+					} catch (Exception $e) {
+						$this->flashMessage('notice', 'При удалении категории произошла ошибка.');
+						$em->getConnection()->rollback();
+					}
+				} else {
+					$this->flashMessage('error', 'При удалении категории произошла ошибка.');
+				}
+			}
         }
-        
         return $this->redirect($this->generateUrl($this->homeroute));
     }
     
@@ -119,7 +134,8 @@ class Action
                 $em = $this->getDoctrine()->getEntityManager();
                 $em->getConnection()->beginTransaction();
                 try {
-                    $em->persist($form->getData());
+                    if (!$id) 
+                        $em->persist($form->getData());
                     $em->flush();
                     
                     if ($row->isHasSeoUrl()) {
@@ -131,7 +147,12 @@ class Action
                     }
                     
                     $em->getConnection()->commit();
-                    $this->flashMessage('notice', 'Категория сохранена.');
+                    $this->flashMessage('notice', 'Запись сохранена.');
+					$event = new ActionEditEvent($form->getData());
+                    if (!$id)
+                        $this->dispatcher->dispatch(ActionAddEvent::NAME, $event);
+                    else
+                        $this->dispatcher->dispatch(ActionEditEvent::NAME, $event);
                 } catch (Exception $e) {
                     $em->getConnection()->rollback();
                     throw $e;

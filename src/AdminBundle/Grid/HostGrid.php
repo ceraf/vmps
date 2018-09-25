@@ -15,20 +15,29 @@ class HostGrid extends Grid
         parent::init();
         
         $this->fields = [
+            'id' => [
+                'name' => 'id',
+                'label' => '#',
+                'style' => '',
+                'sortable' => true
+            ],
             'username' => [
                 'name' => 'username',
                 'label' => 'User Name',
-                'style' => ''
+                'style' => '',
+                'sortable' => true
             ],
             'mac' => [
                 'name' => 'mac',
                 'label' => 'Mac',
-                'style' => ''
+                'style' => '',
+                'sortable' => true
             ],
             'categ' => [
                 'name' => 'categ',
                 'label' => 'Department',
-                'style' => ''
+                'style' => '',
+                'sortable' => true
             ],
         ];
     }

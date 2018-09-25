@@ -2,23 +2,23 @@
 
 namespace App\Repository;
 
-use App\Entity\Host;
+use App\Entity\Systemevent;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use App\AdminBundle\Model\Registry\RegistryGrid;
 
 /**
- * @method Host|null find($id, $lockMode = null, $lockVersion = null)
- * @method Host|null findOneBy(array $criteria, array $orderBy = null)
- * @method Host[]    findAll()
- * @method Host[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Systemevent|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Systemevent|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Systemevent[]    findAll()
+ * @method Systemevent[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class HostRepository extends ServiceEntityRepository implements RegistryGrid
+class SystemeventRepository extends ServiceEntityRepository implements RegistryGrid
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Host::class);
+        parent::__construct($registry, Systemevent::class);
     }
 
     public function getByPage($offset = 0, 
@@ -28,8 +28,8 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
         $qb = $this->createQueryBuilder('p');
 
         if ($search) {
-            $qb->where('p.username LIKE :src OR p.mac LIKE :src')
-                ->setParameter('src', $search.'%');
+            $qb->where('p.mes LIKE :src')
+                ->setParameter('src', '%'.$search.'%');
         }
             
         $query = $qb->orderBy('p.'.$sortby, $sorttype)
@@ -47,8 +47,8 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
                 ->select('count(p)');
             
         if ($search) {
-            $qb->where('p.username LIKE :src OR p.mac LIKE :src')
-                ->setParameter('src', $search.'%');
+            $qb->where('p.mes LIKE :src')
+                ->setParameter('src', '%'.$search.'%');
         }
             
         $query = $qb->getQuery();
@@ -56,16 +56,17 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
 
         return $res;
     }
+    
 //    /**
-//     * @return Host[] Returns an array of Host objects
+//     * @return Systemevent[] Returns an array of Systemevent objects
 //     */
     /*
     public function findByExampleField($value)
     {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.exampleField = :val')
             ->setParameter('val', $value)
-            ->orderBy('h.id', 'ASC')
+            ->orderBy('s.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -74,10 +75,10 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
     */
 
     /*
-    public function findOneBySomeField($value): ?Host
+    public function findOneBySomeField($value): ?Systemevent
     {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
+        return $this->createQueryBuilder('s')
+            ->andWhere('s.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()

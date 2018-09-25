@@ -72,6 +72,10 @@
     <input rel="mac" type="text" {{ block('widget_attributes') }} value="{{ value }}" />
 {% endblock mac_widget %}
 
+{% block ip_widget %}
+    <input rel="ip" type="text" {{ block('widget_attributes') }} value="{{ value }}" />
+{% endblock ip_widget %}
+
 {% block form_errors %}
     {% spaceless %}
         {% if errors|length > 0 %}

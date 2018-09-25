@@ -6,17 +6,6 @@
                     <a title="{{ btn['title'] }}" href="{{ path(btn['route'], {action: btn['action']}) }}"><button type="button" class="{{ btn['btnstyle'] }}" >{{ btn['title'] }}</button></a>
                 {% endfor %}
             </div>
-            <div class="row">
-            
-
-                <div class="col-lg-12">
-                <div class="form-group input-group">
-                                            <input class="form-control" type="text">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button"><i class="fa fa-search"></i>
-                                                </button>
-                                            </span>
-                                        </div></div></div>
             <!-- /.row -->
             {% if paginator %}
             {% block paginator_title %}
@@ -33,7 +22,7 @@
                                     <thead>
                                         <tr>
                                             {% for field in fields %}
-                                                <th {% if (sortby == field['name']) %}class="sorting_{{ sorttype }}"{% endif %} {% if field['style']|default('0') %}style="{{ field['style'] }}"{% endif %} ><a sort-by="{{ field['name'] }}" href="javascript:void(0)">{{ field['label'] }}</a></th>
+                                                <th {% if (sortby == field['name']) %}class="sorting_{{ sorttype }}"{% endif %} {% if field['style']|default('0') %}style="{{ field['style'] }}"{% endif %} ><a {% if (field['sortable']) %}sort-by="{{ field['name'] }}"{% endif %} href="javascript:void(0)">{{ field['label'] }}</a></th>
                                             {% endfor %}
                                             {% if actions %}
                                                 <th></th>
@@ -49,7 +38,7 @@
                                             {% if actions %}
 											<td class="col-lg-1">
                                                 {% for action in actions %}
-                                                    <a title="{{ action['title'] }}" href="{{ path(action['route'], {id: attribute(item, action['field_id']), action: action['action']}) }}" onClick="{{ action['onclick'] }}" ><button type="button" class="btn {{ action['btntype'] }} btn-circle"><i class="{{ action['icon'] }}"></i></button></a>
+                                                    <a title="{{ action['title'] }}" {% if (action['method']|default('get')) == 'post' %}param="{{ attribute(item, action['field_id']) }}" action="{{ path(action['route'], {action: action['action']}) }}"{% endif %} href="{% if (action['method']|default('get')) == 'post' %}javascript:void(0){% else %}{{ path(action['route'], {id: attribute(item, action['field_id']), action: action['action']}) }}{% endif %}" onClick="{{ action['onclick'] }}" ><button type="button" class="btn {{ action['btntype'] }} btn-circle"><i class="{{ action['icon'] }}"></i></button></a>
                                                 {% endfor %}
                                             </td>
                                             {% endif %}

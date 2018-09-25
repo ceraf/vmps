@@ -2,23 +2,23 @@
 
 namespace App\Repository;
 
-use App\Entity\Host;
+use App\Entity\Nas;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 use App\AdminBundle\Model\Registry\RegistryGrid;
 
 /**
- * @method Host|null find($id, $lockMode = null, $lockVersion = null)
- * @method Host|null findOneBy(array $criteria, array $orderBy = null)
- * @method Host[]    findAll()
- * @method Host[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Nas|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Nas|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Nas[]    findAll()
+ * @method Nas[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class HostRepository extends ServiceEntityRepository implements RegistryGrid
-{
+class NasRepository extends ServiceEntityRepository implements RegistryGrid
+{ 
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Host::class);
+        parent::__construct($registry, Nas::class);
     }
 
     public function getByPage($offset = 0, 
@@ -28,7 +28,7 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
         $qb = $this->createQueryBuilder('p');
 
         if ($search) {
-            $qb->where('p.username LIKE :src OR p.mac LIKE :src')
+            $qb->where('p.ip LIKE :src')
                 ->setParameter('src', $search.'%');
         }
             
@@ -47,7 +47,7 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
                 ->select('count(p)');
             
         if ($search) {
-            $qb->where('p.username LIKE :src OR p.mac LIKE :src')
+            $qb->where('p.ip LIKE :src')
                 ->setParameter('src', $search.'%');
         }
             
@@ -56,16 +56,17 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
 
         return $res;
     }
+    
 //    /**
-//     * @return Host[] Returns an array of Host objects
+//     * @return Nas[] Returns an array of Nas objects
 //     */
     /*
     public function findByExampleField($value)
     {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
+        return $this->createQueryBuilder('n')
+            ->andWhere('n.exampleField = :val')
             ->setParameter('val', $value)
-            ->orderBy('h.id', 'ASC')
+            ->orderBy('n.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -74,10 +75,10 @@ class HostRepository extends ServiceEntityRepository implements RegistryGrid
     */
 
     /*
-    public function findOneBySomeField($value): ?Host
+    public function findOneBySomeField($value): ?Nas
     {
-        return $this->createQueryBuilder('h')
-            ->andWhere('h.exampleField = :val')
+        return $this->createQueryBuilder('n')
+            ->andWhere('n.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()

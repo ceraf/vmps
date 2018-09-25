@@ -1,14 +1,38 @@
-admin_home:
-    path: /home
-    controller: App\AdminBundle\Controller\DefaultController::index
-
 admin_host_list:
     path: /hosts
     controller: App\AdminBundle\Controller\HostController::index
   
+admin_event_list:
+    path: /events
+    controller: App\AdminBundle\Controller\EventController::index
+  
+admin_netlog_list:
+    path: /netlog
+    controller: App\AdminBundle\Controller\NetlogController::index
+  
 admin_host_action:
     path: /host/{action}/{id}
     controller: App\AdminBundle\Controller\HostController::rowact
+    defaults:
+        id: 0 
+    
+admin_nas_list:
+    path: /nases
+    controller: App\AdminBundle\Controller\NasController::index
+  
+admin_nas_action:
+    path: /nas/{action}/{id}
+    controller: App\AdminBundle\Controller\NasController::rowact
+    defaults:
+        id: 0 
+    
+admin_user_list:
+    path: /users
+    controller: App\AdminBundle\Controller\UsersController::index
+  
+admin_user_action:
+    path: /user/{action}/{id}
+    controller: App\AdminBundle\Controller\UsersController::rowact
     defaults:
         id: 0 
     

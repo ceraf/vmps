@@ -2,9 +2,9 @@
 
 namespace App\AdminBundle\Controller;
 
-use App\Entity\Host as Entity;
-use App\AdminBundle\Form\HostForm as Form;
-use App\AdminBundle\Grid\HostGrid as Grid;
+use App\Entity\Nas as Entity;
+use App\AdminBundle\Form\NasForm as Form;
+use App\AdminBundle\Grid\NasGrid as Grid;
 
 use App\AdminBundle\Model\Controller\AdminController;
 
@@ -12,12 +12,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\EventDispatcher\Event;
-use App\AdminBundle\Model\Event\HostEditListener;
- 
+use App\AdminBundle\Model\Event\NasEditListener;
 
-class HostController extends AdminController
+class NasController extends AdminController
 {
-    const HOME_ROUTE = 'admin_host_list';
+    const HOME_ROUTE = 'admin_nas_list';
     
     public function index(Request $request)
     {
@@ -26,7 +25,7 @@ class HostController extends AdminController
 
 	public function deleteAction($id, Request $request)
     {
-		$listener = new HostEditListener($this->getUser(), $this->get('doctrine'));
+		$listener = new NasEditListener($this->getUser(), $this->get('doctrine'));
         $this->dispatcher->addListener('action.delete', array($listener, 'onDeleteHost'));
         return $this->getFormAction($request)
                 ->setEntity(Entity::class)
@@ -36,13 +35,13 @@ class HostController extends AdminController
     
 	public function editAction($id, Request $request)
 	{
-		$listener = new HostEditListener($this->getUser(), $this->get('doctrine'));
+		$listener = new NasEditListener($this->getUser(), $this->get('doctrine'));
         $this->dispatcher->addListener('action.edit', array($listener, 'onEditHost'));
         $this->dispatcher->addListener('action.add', array($listener, 'onAddHost'));
         return $this->getFormAction($request)
                 ->setEntity(Entity::class)
                 ->setForm(Form::class)
-                ->setTitle(($id) ? 'Edit host' : 'Add host')
+                ->setTitle(($id) ? 'Edit nas' : 'Add nas')
                 ->setHomeRoute(self::HOME_ROUTE)
                 ->execute('edit', ['id' => $id]);
     }

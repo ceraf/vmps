@@ -32,6 +32,7 @@ abstract class Grid
     protected $optnumpages = [20,50,100,200];
     protected $sortby;
     protected $sorttype;
+    protected $search;
 
     public function __construct (Request $request, $container)
     {
@@ -66,6 +67,7 @@ abstract class Grid
                 'title' => $this->title,
                 'sortby' => $this->sortby,
                 'sorttype' => strtolower($this->sorttype),
+                'search' => $this->search
             ]);
     }
 
@@ -95,12 +97,13 @@ abstract class Grid
         ];
         $this->actions['delete'] = [
                 'title' => 'Delete',
+				'method' => 'post',
                 'route' => $this->action_route,
                 'action' => 'delete',
                 'field_id' => 'id',
                 'icon' => 'fa fa-trash-o',
                 'btntype' => 'btn-danger',
-                'onclick' => "return confirm('Действительно удалить?');"
+                'onclick' => ""
         ];
         
         $this->buttons['add'] = [
@@ -119,6 +122,12 @@ abstract class Grid
             $this->itemsonpage = $count;
         }
 
+        $repository = $this->getDoctrine()
+                            ->getRepository($this->entityname);
+                            
+    //    if (method_exists($repository, 'getTotal')) {
+        $total = $repository->getTotal($this->search);
+     /*   } else {
             $total = $this->getDoctrine()
                 ->getEntityManager()
                 ->createQueryBuilder()
@@ -126,6 +135,7 @@ abstract class Grid
                 ->from($this->entityname,'p')
                 ->getQuery()
                 ->getSingleScalarResult(); 
+        }*/
         
         if (!$total)
             return null;
@@ -152,20 +162,36 @@ abstract class Grid
         return $this;
     }
     
-    protected function fetch()
+    protected function initSort(): void
     {
-        $p = $this->request->get('p') ?? '0';
         $this->sortby = ($this->getGridSession('sort_by')) ?? self::DEFAULT_SORT;
         $this->sorttype = ($this->getGridSession('sort_type')) ?? self::DEFAULT_SORT_TYPE;
         if ($this->request->get('sort_by') &&
-                in_array($this->request->get('sort_by'), array_keys($this->fields))) {
+                in_array($this->request->get('sort_by'), array_keys(array_filter($this->fields, 
+                    function($item){
+                        return $item['sortable'] ?? false;}
+                    ))
+                )) {
             if ($this->sortby == $this->request->get('sort_by'))
                 $this->sorttype = ($this->sorttype == 'ASC') ? 'DESC' : 'ASC';       
             $this->sortby = $this->request->get('sort_by');
             $this->setGridSession(self::SESSION_SORT_BY, $this->sortby);
             $this->setGridSession(self::SESSION_SORT_TYPE, $this->sorttype);
-        }
+        }  
+    }
+    
+    protected function initSearch(): void
+    {
+        $this->search = strtolower($this->request->get('search') ?? null);
+    }
+    
+    protected function fetch()
+    {
+        $p = $this->request->get('p') ?? '0';
         
+        $this->initSort();
+        $this->initSearch();
+
         try {
             $repository = $this->getDoctrine()
                             ->getRepository($this->entityname);
@@ -173,15 +199,15 @@ abstract class Grid
             if (method_exists($repository, 'getByPage')) {
                 $this->paginator = $this->getPaginator($p);
                 $offset = $p*$this->itemsonpage;
-                $this->collection = $repository->getByPage($this->entityname, $offset, 
-                        $this->itemsonpage, $this->sortby, $this->sorttype);
+                $this->collection = $repository->getByPage($offset, 
+                        $this->itemsonpage, $this->sortby, $this->sorttype, $this->search);
                 
             } else {
                 $this->collection = $repository->findBy([]);
                 $this->paginator = null;
             }
         } catch (Exception $e) {
-            throw new Exception('Ошибка базы данных.');
+            throw new Exception('Database error.');
         }
         return $this;
     }

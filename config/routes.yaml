@@ -1,6 +1,25 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+admin_core_login:
+    path: /login
+    controller: App\AdminBundle\Controller\AuthController::login
+
+login_check:
+    path: /login_check
+    
+logout:
+    path: /logout
+
+index:
+    path: /
+    controller: App\AdminBundle\Controller\HostController::index
+
 admin:
     resource: "@AdminBundle/Resources/config/routing.yaml"
-    prefix:   /admin
+    prefix:   /
+    
+
+    
+
