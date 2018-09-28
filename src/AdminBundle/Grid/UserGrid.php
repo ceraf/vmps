@@ -12,7 +12,22 @@ class UserGrid extends Grid
         $this->grid_route = 'admin_user_list';
         $this->title = 'Пользователи';
         
-        parent::init();
+        $this->actions['edit'] = [
+                'title' => 'Edit',
+                'route' => $this->action_route,
+                'action' => 'edit',
+                'field_id' => 'id',
+                'icon' => 'fa fa-edit',
+                'btntype' => 'btn-success',
+                'onclick' => ''
+        ];
+        
+        $this->buttons['add'] = [
+            'title' => 'Add',
+            'route' => $this->action_route,
+            'action' => 'edit',
+            'btnstyle' => 'btn btn-primary',
+        ];
         
         $this->fields = [
             'username' => [

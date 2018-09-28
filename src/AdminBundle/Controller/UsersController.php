@@ -11,6 +11,8 @@ use App\AdminBundle\Model\Controller\AdminController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
+use App\AdminBundle\Model\Event\UserEditListener;
+
 class UsersController extends AdminController
 {
     const HOME_ROUTE = 'admin_user_list';
@@ -22,6 +24,8 @@ class UsersController extends AdminController
 
 	public function deleteAction($id, Request $request)
     {
+        if ($this->getUser()->getId() != $id)
+            return $this->redirect($this->generateUrl('index'));
         return $this->getFormAction($request)
                 ->setEntity(Entity::class)
                 ->setHomeRoute(self::HOME_ROUTE)
@@ -30,6 +34,10 @@ class UsersController extends AdminController
     
 	public function editAction($id, Request $request)
 	{
+        if ($id && ($this->getUser()->getId() != $id))
+            return $this->redirect($this->generateUrl('index'));
+		$listener = new UserEditListener($this->getUser(), $this->get('doctrine'));
+        $this->dispatcher->addListener('action.add', array($listener, 'onAddHost'));
         return $this->getFormAction($request)
                 ->setEntity(Entity::class)
                 ->setForm(Form::class)
