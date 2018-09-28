@@ -39,6 +39,12 @@ class HostGrid extends Grid
                 'style' => '',
                 'sortable' => true
             ],
+            'vlname' => [
+                'name' => 'vlname',
+                'label' => 'VLAN',
+                'style' => '',
+                'sortable' => true
+            ],
         ];
     }
 }
