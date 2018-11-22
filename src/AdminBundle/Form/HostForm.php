@@ -98,6 +98,7 @@ class HostForm extends AbstractType
                     'SNTB' => 'SNTB',
                     'GESR' => 'GESR',
                     'COKS' => 'COKS',
+		    'SA' => 'SA'
                 )
             ]
         );  
@@ -112,13 +113,39 @@ class HostForm extends AbstractType
                     'bt_size' => '12'
                 ],
                 'constraints' => [
-                    new NotBlank(['message' => 'Enter the mac address'])
+                    new NotBlank(['message' => 'Enter the mac address']),
+		    new Callback([$this, 'checkMac'])
                 ]
             ]
         );
         
 
     }
+
+    public function checkMac($data, ExecutionContextInterface $context)
+    { 
+        global $kernel;
+
+        $qb = $kernel->getContainer()->get('doctrine')
+                ->getEntityManager()
+                ->createQueryBuilder()
+                ->select('count(p.id)')
+                ->from(Entity::class,'p')
+                ->andWhere('p.mac = :mac');
+				
+		if ($this->options['data']->getId()) {
+			$qb->andWhere('p.id <> :curr_id')
+				->setParameter('curr_id', $this->options['data']->getId());	
+		} 	
+				
+        $num = $qb->setParameter('mac', $data)
+                ->getQuery()
+                ->getSingleScalarResult(); 
+            
+        if ($num > 0)
+            $context->buildViolation('Duplicate email.')->addViolation();
+         
+    }     
 
     public function getName()
     {

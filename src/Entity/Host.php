@@ -152,6 +152,7 @@ class Host implements BaseDBModel
             'SNTB' => 'VL9',
             'GESR' => 'VL1',
             'COKS' => 'VL8',
+            'SA' => 'SA'
         ];
         
         return $data[$name] ?? 'DENY';
